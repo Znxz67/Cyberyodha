@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberYodha Profile</title>
+  <link rel="icon" href="photos/reved-removebg-preview.png">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 20px;
+    }
+    .profile-container {
+      background: #1e293b;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+      width: 100%;
+      max-width: 400px;
+    }
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 20px;
+      border: 3px solid #3b82f6;
+    }
+    h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    .level-box {
+      background: #334155;
+      padding: 10px;
+      border-radius: 10px;
+      margin: 10px 0 20px;
+      font-size: 16px;
+    }
+    .progress {
+      background: #0f172a;
+      border-radius: 10px;
+      overflow: hidden;
+      height: 16px;
+      margin-top: 10px;
+    }
+    .progress-bar {
+      height: 100%;
+      background: #3b82f6;
+      width: 65%; /* Placeholder XP progress */
+    }
+    .btn {
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin: 10px 5px;
+    }
+    .btn:hover {
+      background: #2563eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-container">
+    <img src="photos/user-avatar.png" alt="User Avatar" class="profile-avatar">
+    <h2>CyberYodha</h2>
+    <div class="level-box">
+      <strong>Level:</strong> 3<br>
+      <div class="progress">
+        <div class="progress-bar"></div>
+      </div>
+      <small>XP: 1300 / 2000</small>
+    </div>
+    <button class="btn" onclick="window.location.href='cyberlearn-game.html'">🏠 Back to Home</button>
+    <button class="btn" onclick="alert('Edit profile coming soon')">✏️ Edit</button>
+    <button class="btn" onclick="window.location.href='login.html'">🚪 Logout</button>
+  </div>
+</body>
+</html>

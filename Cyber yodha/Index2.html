@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CyberYodha</title>
+   <link rel="icon" href="photos/reved-removebg-preview.png">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      width: 100%;
+      max-width: 500px;
+      padding: 20px;
+      background: #1e293b;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    .xp-info {
+      font-size: 14px;
+      margin-bottom: 20px;
+      color: #94a3b8;
+    }
+    .question {
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+    .options button {
+      display: block;
+      margin: 8px auto;
+      padding: 12px 20px;
+      background: #334155;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+      transition: background 0.3s ease;
+    }
+    .options button:hover {
+      background: #475569;
+    }
+    .options button.correct {
+      background: #16a34a;
+    }
+    .options button.wrong {
+      background: #dc2626;
+    }
+    #nextBtn, #restartBtn, #continueBtn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #nextBtn:disabled {
+      background: #64748b;
+      cursor: not-allowed;
+    }
+    .feedback {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #facc15;
+    }
+    .progress, .xp-bar-container {
+      margin-top: 20px;
+      height: 8px;
+      background: #334155;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .progress-bar, .xp-bar {
+      height: 8px;
+      background: #3b82f6;
+      width: 0%;
+      transition: width 0.3s;
+    }
+    .xp-bar {
+      background: #10b981;
+    }
+    .fade {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .back {
+    padding-bottom: 10px;
+    padding-left: 20px;
+    padding-top:10px ;
+    padding-right: 20px;
+    margin-top:15px  ;
+    border-radius: 10px;
+    color: #f8fafc;
+    background-color:#3b82f6 ;
+    border-style: none;
+    font-size: 15px;
+  }
+  .back:hover {
+    color: black;
+    background-color: whitesmoke;
+    transition: .31s;
+  }
+  </style>
+</head>
+<body>
+  <div class="container fade">
+    <h1>🛡️ CyberLearn: <span id="levelLabel">Level 1</span></h1>
+    <div class="xp-info">XP: <span id="xpDisplay">0</span> / 10000</div>
+    <div class="xp-bar-container">
+      <div id="xpBar" class="xp-bar"></div>
+    </div>
+
+    <p class="question" id="questionText">Loading...</p>
+    <div class="options" id="optionsList"></div>
+    <button id="nextBtn" disabled>Next</button>
+    <button id="continueBtn" style="display:none;">Continue</button>
+    <p id="feedback" class="feedback"></p>
+
+    <div class="progress">
+      <div id="progressBar" class="progress-bar"></div>
+    </div>
+    <div>
+    <button class="back" onclick="location.href='cyberlearn-game.html'">Back</button>
+  </div>
+  
+
+    <button id="restartBtn"> Restart</button>
+  </div>
+  
+
+  <script>
+    const cyberQuestions = [
+      { text: "What is the main goal of a firewall in network security?", options: ["To encrypt data", "To block unauthorized access", "To speed up internet", "To manage passwords"], correct: 1 },
+      { text: "What type of attack involves overwhelming a system with traffic?", options: ["Phishing", "Man-in-the-middle", "DDoS", "Trojan"], correct: 2 },
+      { text: "Which protocol is used for secure communication over the Internet?", options: ["HTTP", "FTP", "SMTP", "HTTPS"], correct: 3 },
+      { text: "Which of the following is a network security threat?", options: ["Firewall", "Antivirus", "Ransomware", "Encryption"], correct: 2 },
+      { text: "MAC address filtering is used to:", options: ["Filter websites", "Assign IP addresses", "Control device access", "Block pop-ups"], correct: 2 }
+    ];
+
+    const allLevels = [];
+    for (let i = 1; i <= 13; i++) {
+      allLevels.push({
+        name: `Level ${i}`,
+        questions: [
+          cyberQuestions[i % cyberQuestions.length],
+          cyberQuestions[(i + 1) % cyberQuestions.length]
+        ]
+      });
+    }
+
+    let currentLevel = parseInt(localStorage.getItem("cyberlearn-level")) || 0;
+    let currentQuestion = 0;
+    let currentXP = parseInt(localStorage.getItem("cyberlearn-xp")) || 0;
+
+    const questionText = document.getElementById('questionText');
+    const optionsList = document.getElementById('optionsList');
+    const nextBtn = document.getElementById('nextBtn');
+    const feedback = document.getElementById('feedback');
+    const progressBar = document.getElementById('progressBar');
+    const levelLabel = document.getElementById('levelLabel');
+    const xpDisplay = document.getElementById('xpDisplay');
+    const xpBar = document.getElementById('xpBar');
+    const restartBtn = document.getElementById('restartBtn');
+    const continueBtn = document.getElementById('continueBtn');
+
+    function updateXP(amount) {
+      currentXP += amount;
+      if (currentXP >= 10000) currentXP = 10000;
+      localStorage.setItem("cyberlearn-xp", currentXP);
+      xpDisplay.textContent = currentXP;
+      xpBar.style.width = `${(currentXP / 10000) * 100}%`;
+    }
+
+    function loadQuestion() {
+      const level = allLevels[currentLevel];
+      if (!level) {
+        questionText.textContent = "🎉 You've completed all levels!";
+        optionsList.innerHTML = "";
+        nextBtn.style.display = "none";
+        continueBtn.style.display = "none";
+        feedback.textContent = "";
+        progressBar.style.width = "100%";
+        return;
+      }
+
+      levelLabel.textContent = level.name;
+      const q = level.questions[currentQuestion];
+      questionText.textContent = q.text;
+      optionsList.innerHTML = "";
+      feedback.textContent = "";
+      nextBtn.disabled = true;
+
+      q.options.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(index, btn);
+        optionsList.appendChild(btn);
+      });
+
+      updateProgress();
+      xpDisplay.textContent = currentXP;
+      xpBar.style.width = `${(currentXP / 10000) * 100}%`;
+    }
+
+    function checkAnswer(index, button) {
+      const correctIndex = allLevels[currentLevel].questions[currentQuestion].correct;
+      const buttons = optionsList.querySelectorAll("button");
+      buttons.forEach(btn => btn.disabled = true);
+
+      if (index === correctIndex) {
+        button.classList.add("correct");
+        feedback.textContent = "✅ Correct!";
+        updateXP(20);
+      } else {
+        button.classList.add("wrong");
+        buttons[correctIndex].classList.add("correct");
+        feedback.textContent = "❌ Wrong. Review this topic.";
+      }
+      nextBtn.disabled = false;
+    }
+
+    function updateProgress() {
+      const percent = ((currentQuestion) / allLevels[currentLevel].questions.length) * 100;
+      progressBar.style.width = `${percent}%`;
+    }
+
+    nextBtn.onclick = () => {
+      document.querySelector('.container').classList.remove('fade');
+      void document.querySelector('.container').offsetWidth;
+      document.querySelector('.container').classList.add('fade');
+
+      currentQuestion++;
+      if (currentQuestion < allLevels[currentLevel].questions.length) {
+        loadQuestion();
+      } else {
+        currentLevel++;
+        currentQuestion = 0;
+        localStorage.setItem("cyberlearn-level", currentLevel);
+        loadQuestion();
+      }
+    };
+
+    continueBtn.onclick = () => {
+      continueBtn.style.display = 'none';
+      nextBtn.style.display = 'inline-block';
+      currentQuestion = 0;
+      loadQuestion();
+    };
+
+    restartBtn.onclick = () => {
+      currentLevel = 0;
+      currentQuestion = 0;
+      currentXP = 0;
+      localStorage.setItem("cyberlearn-level", currentLevel);
+      localStorage.setItem("cyberlearn-xp", currentXP);
+      continueBtn.style.display = 'none';
+      nextBtn.style.display = 'inline-block';
+      loadQuestion();
+    };
+
+    loadQuestion();
+  </script>
+</body>
+</html>
